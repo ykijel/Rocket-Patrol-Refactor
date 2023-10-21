@@ -143,7 +143,7 @@ class Play extends Phaser.Scene {
     this.scoreLeft.text = this.p1Score;
     this.scoreRight.text = this.highScore;
     let rand = Math.floor(Math.random() * 5);
-    console.log(rand);
+
     if(rand == 0)
     {
       this.sound.play('sfx_explosion'); 
