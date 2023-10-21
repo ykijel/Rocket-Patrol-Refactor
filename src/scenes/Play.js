@@ -34,6 +34,10 @@ class Play extends Phaser.Scene {
             frameRate: 30
         });
         this.p1Score = 0;
+        if(!this.highScore)
+        {
+          this.highScore = 0;
+        }
         // display score
         let scoreConfig = {
             fontFamily: 'Courier',
@@ -45,15 +49,29 @@ class Play extends Phaser.Scene {
                 top: 5,
                 bottom: 5,
             },
-            fixedWidth: 100
+            fixedWidth: 70
         }
-        this.scoreLeft = this.add.text(borderUISize + borderPadding, borderUISize + borderPadding*2, this.p1Score, scoreConfig);
+        let scoreTextConfig = {
+          fontFamily: 'Courier',
+          fontSize: '20px',
+          color: '#000000',
+          align: 'right',
+          padding: {
+              top: 5,
+              bottom: 5,
+          },
+          fixedWidth: 200
+      }
+        this.scoreLeft = this.add.text(borderUISize + borderPadding*6, borderUISize + borderPadding*2, this.p1Score, scoreConfig);
+        this.scoreRight = this.add.text(game.config.width - borderUISize*4 - borderPadding, borderUISize + borderPadding*2, this.highScore, scoreConfig);
+        this.scoreTextRight = this.add.text(game.config.width - borderUISize*10 - borderPadding*2, borderUISize + borderPadding*2, "High Score", scoreTextConfig);
+        this.scoreTextLeft = this.add.text(borderPadding-115, borderUISize + borderPadding*2, "Score", scoreTextConfig);
         // GAME OVER flag
         this.gameOver = false;
 
         // 60-second play clock
         scoreConfig.fixedWidth = 0;
-        this.clock = this.time.delayedCall(60000, () => {
+        this.clock = this.time.delayedCall(game.settings.gameTimer, () => {
             this.add.text(game.config.width/2, game.config.height/2, 'GAME OVER', scoreConfig).setOrigin(0.5);
             this.add.text(game.config.width/2, game.config.height/2 + 64, 'Press (R) to Restart or ← for Menu', scoreConfig).setOrigin(0.5);
             this.gameOver = true;
@@ -118,8 +136,35 @@ class Play extends Phaser.Scene {
     });
     // score add and repaint
     this.p1Score += ship.points;
-    this.scoreLeft.text = this.p1Score;      
-    this.sound.play('sfx_explosion'); 
+    if(this.p1Score > this.highScore)
+    {
+      this.highScore = this.p1Score;
+    }
+    this.scoreLeft.text = this.p1Score;
+    this.scoreRight.text = this.highScore;
+    let rand = Math.floor(Math.random() * 5);
+    console.log(rand);
+    if(rand == 0)
+    {
+      this.sound.play('sfx_explosion'); 
+    }
+    else if(rand == 1)
+    {
+      this.sound.play('sfx_explosion2');
+    }
+    else if(rand == 2)
+    {
+      this.sound.play('sfx_explosion3');
+    }
+    else if(rand == 3)
+    {
+      this.sound.play('sfx_explosion4');
+    }
+    else
+    {
+      this.sound.play('sfx_explosion5');
+    }
+    
   }
 
 }
