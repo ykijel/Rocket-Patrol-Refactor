@@ -10,6 +10,7 @@ class Play extends Phaser.Scene {
         this.load.image('gigaspaceship', './assets/gigaspaceship.png');
         this.load.image('starfield', './assets/starfield.png');
         this.load.spritesheet('explosion', './assets/explosion.png', {frameWidth: 64, frameHeight: 32, startFrame: 0, endFrame: 9});
+        this.load.atlas('flares', './assets/flares.png', './assets/flares.json');
       }
 
     create() {
@@ -68,6 +69,7 @@ class Play extends Phaser.Scene {
         this.scoreRight = this.add.text(game.config.width - borderUISize*4 - borderPadding, borderUISize + borderPadding*2, this.highScore, scoreConfig);
         this.scoreTextRight = this.add.text(game.config.width - borderUISize*10 - borderPadding*2, borderUISize + borderPadding*2, "High Score", scoreTextConfig);
         this.scoreTextLeft = this.add.text(borderPadding-115, borderUISize + borderPadding*2, "Score", scoreTextConfig);
+        this.fireText = this.add.text((game.config.width - borderUISize*10 - borderPadding*5), borderUISize + borderPadding*2, "FIRE", scoreConfig);
         // GAME OVER flag
         this.gameOver = false;
 
@@ -78,9 +80,13 @@ class Play extends Phaser.Scene {
             this.add.text(game.config.width/2, game.config.height/2 + 64, 'Press (R) to Restart or ← for Menu', scoreConfig).setOrigin(0.5);
             this.gameOver = true;
         }, null, this);
+
+        
   }
 
   update() {
+
+    this.fireText.visible = false;
       // check key input for restart
     if (this.gameOver && Phaser.Input.Keyboard.JustDown(keyR)) {
         this.scene.restart();
@@ -99,23 +105,30 @@ class Play extends Phaser.Scene {
     if(this.checkCollision(this.p1Rocket, this.gigaSpaceship)) 
     {
         this.p1Rocket.reset();
-        this.shipExplode(this.gigaSpaceship);   
+        this.shipExplode(this.gigaSpaceship);
+        this.shootParticles(this.gigaSpaceship);  
     }
     if(this.checkCollision(this.p1Rocket, this.ship02)) 
     {
         this.p1Rocket.reset();
         this.shipExplode(this.ship02);
+        this.shootParticles(this.ship02); 
     }
     if(this.checkCollision(this.p1Rocket, this.ship01)) 
     {
         this.p1Rocket.reset();
         this.shipExplode(this.ship01);
+        this.shootParticles(this.ship01); 
     }
     if(this.p1Rocket.penalty)
     {
         this.p1Score -= 5;
         this.p1Rocket.penalty = false;
         this.scoreLeft.text = this.p1Score;
+    }
+    if(this.p1Rocket.isFiring)
+    {
+      this.fireText.visible = true;
     }
   }
 
@@ -173,6 +186,20 @@ class Play extends Phaser.Scene {
       this.sound.play('sfx_explosion5');
     }
     
+  }
+
+  shootParticles(ship)
+  {
+    const emitter = this.add.particles(ship.x, ship.y, 'flares', {
+      frame: [ 'red' ],
+      lifespan: 250,
+      speed: { min: 400, max: 400 },
+      scale: { start: 0.5, end: 0 },
+      gravityY: 300,
+      blendMode: 'ADD',
+      emitting: false
+  });
+    emitter.explode(20); 
   }
 
 }
