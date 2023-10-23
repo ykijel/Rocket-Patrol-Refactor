@@ -111,6 +111,12 @@ class Play extends Phaser.Scene {
         this.p1Rocket.reset();
         this.shipExplode(this.ship01);
     }
+    if(this.p1Rocket.penalty)
+    {
+        this.p1Score -= 5;
+        this.p1Rocket.penalty = false;
+        this.scoreLeft.text = this.p1Score;
+    }
   }
 
   checkCollision(rocket, ship) {
