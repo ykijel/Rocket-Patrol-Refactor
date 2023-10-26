@@ -122,7 +122,10 @@ class Play extends Phaser.Scene {
     }
     if(this.p1Rocket.penalty)
     {
-        this.p1Score -= 5;
+        if(this.p1Score > 0)
+        {
+          this.p1Score -= 5;
+        }
         this.p1Rocket.penalty = false;
         this.scoreLeft.text = this.p1Score;
     }
